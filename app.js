@@ -166,6 +166,16 @@ const app = {
         cd.style.opacity = 1;
       }
     };
+    playlist.ontouchmove = function () {
+      let scrollTop = e.deltaY;
+      if (scrollTop > 0) {
+        cd.style.width = 0;
+        cd.style.opacity = 0;
+      } else {
+        cd.style.width = 200 + "px";
+        cd.style.opacity = 1;
+      }
+    };
 
     // play song when click on song list
     player.onclick = function (e) {
