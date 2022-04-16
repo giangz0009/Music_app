@@ -42,7 +42,7 @@ const app = {
 
   handleDOMEvent: function (thisApp) {
     const _this = thisApp;
-    let lastScrollTop = 0;
+    let lastScrollTop;
 
     // CD rotate
     const cdThumbAnimate = cdThumb.animate([{ transform: "rotate(360deg)" }], {
@@ -166,15 +166,21 @@ const app = {
         cd.style.opacity = 1;
       }
     };
-    playlist.ontouchmove = function () {
-      let scrollTop = e.deltaY;
-      if (scrollTop > 0) {
-        cd.style.width = 0;
-        cd.style.opacity = 0;
-      } else {
-        cd.style.width = 200 + "px";
-        cd.style.opacity = 1;
+    playlist.ontouchmove = function (e) {
+      let scrollTop = e.changedTouches[0].clientY;
+      if (lastScrollTop) {
+        if (lastScrollTop < scrollTop) {
+          // Scroll down
+          cd.style.width = 200 + "px";
+          cd.style.opacity = 1;
+        } else {
+          // Scroll up
+          cd.style.width = 0;
+          cd.style.opacity = 0;
+        }
       }
+
+      lastScrollTop = scrollTop;
     };
 
     // play song when click on song list
