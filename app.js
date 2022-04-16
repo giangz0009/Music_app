@@ -2,6 +2,9 @@ const API_HOST = "shazam.p.rapidapi.com";
 const API_KEY = "f35f0a7761mshca1c10f5bfb394fp13883fjsnd0f30751d099";
 const API =
   "https://shazam.p.rapidapi.com/songs/list-artist-top-tracks?id=40008598&locale=en-US";
+
+const PLAYER_STORAGE_KEY = "F8_Course_Giang_Do";
+
 const options = {
   method: "GET",
   headers: {
@@ -31,10 +34,18 @@ const app = {
   isRandom: false,
   isPlaying: false,
   currentIndex: 0,
+  config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
   songLists: [],
   playedSongs: [],
 
+  setConfig: function (key, value) {
+    this.config[key] = value;
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config));
+  },
+
   start: function () {
+    this.loadConfig();
+    this.renderConfig();
     this.handleRender();
 
     this.handleDOMEvent(this);
@@ -104,12 +115,16 @@ const app = {
 
       if (_this.isRandom && !_this.playedSongs.includes(_this.currentIndex))
         _this.playedSongs.push(_this.currentIndex);
+
+      _this.setConfig("isRandom", _this.isRandom);
     };
 
     // event click repeat btn
     repeatBtn.onclick = function () {
       _this.isRepeat = !_this.isRepeat;
       repeatBtn.classList.toggle("active", _this.isRepeat);
+
+      _this.setConfig("isRepeat", _this.isRepeat);
     };
 
     // event audio play
@@ -200,6 +215,16 @@ const app = {
         }
       }
     };
+  },
+
+  renderConfig: function () {
+    repeatBtn.classList.toggle("active", this.isRepeat);
+    randomBtn.classList.toggle("active", this.isRandom);
+  },
+
+  loadConfig: function () {
+    this.isRandom = this.config.isRandom;
+    this.isRepeat = this.config.isRepeat;
   },
 
   handleRender: function () {
